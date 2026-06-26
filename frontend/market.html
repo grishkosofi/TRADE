@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockPulse | Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="app-theme theme-dark">
+    <nav class="topbar">
+      <div class="topbar-inner container-fluid">
+        <a class="brand" href="index.html" data-nav="home"><span class="brand-mark">TX</span><span class="brand-name">Tradix</span></a>
+        <div class="nav-links d-none d-lg-flex">
+          <a href="index.html" data-nav="home">Home</a>
+          <a class="active" href="market.html" data-nav="markets">Markets</a>
+          <a href="portfolio.html" data-nav="portfolio">Portfolio</a>
+          <a href="profile.html" data-nav="profile">Profile</a>
+        </div>
+        <div class="nav-actions d-flex align-items-center gap-2 gap-lg-3">
+          <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+          <a class="pro-btn" href="pro.html" data-nav="pro">⟡ Upgrade to Pro</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-5 market-page">
+      <section class="market-toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div><h1 class="page-title mb-0">Markets and News</h1></div>
+        <input class="search-input market-search" placeholder="Search stocks, news or ETFs..." />
+      </section>
+
+      <section class="mode-tabs mb-4">
+        <button class="mode-btn active" data-mode="stocks">↗ Stocks</button>
+        <button class="mode-btn" data-mode="news">📰 News</button>
+      </section>
+
+      <section class="filter-tabs mb-4">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Technology</button>
+        <button class="filter-btn">Finance</button>
+        <button class="filter-btn">Health</button>
+      </section>
+
+      <section id="stocksGrid" class="row g-3 g-lg-4">
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon dark">🍎</div><div><div class="stock-ticker">AAPL</div><div class="stock-name">Apple Inc.</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +1,2%</span><div class="stock-price">$189.30</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon tesla">T</div><div><div class="stock-ticker">TSLA</div><div class="stock-name">Tesla Inc.</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +2,7%</span><div class="stock-price">$213.17</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon nvidia">▣</div><div><div class="stock-ticker">NVDA</div><div class="stock-name">Nvidia Inc.</div></div></div><div class="stock-right"><span class="trend-badge danger">↘ -2,7%</span><div class="stock-price">$413.17</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon amazon">⌂</div><div><div class="stock-ticker">AMZN</div><div class="stock-name">Amazon Inc.</div></div></div><div class="stock-right"><span class="trend-badge danger">↘ -2,7%</span><div class="stock-price">$713.17</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon microsoft">◱</div><div><div class="stock-ticker">MSFT</div><div class="stock-name">Microsoft Corp.</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +0,8%</span><div class="stock-price">$378.92</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon google">◉</div><div><div class="stock-ticker">GOOGL</div><div class="stock-name">Alphabet Inc.</div></div></div><div class="stock-right"><span class="trend-badge danger">↘ -1,1%</span><div class="stock-price">$153.51</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon meta">☺</div><div><div class="stock-ticker">META</div><div class="stock-name">Meta Platforms</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +3,2%</span><div class="stock-price">$489.20</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon jpm">⌂</div><div><div class="stock-ticker">JPM</div><div class="stock-name">JPMorgan Chase</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +0,4%</span><div class="stock-price">$196.44</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon bac">■</div><div><div class="stock-ticker">BAC</div><div class="stock-name">Bank of America</div></div></div><div class="stock-right"><span class="trend-badge danger">↘ -0,9%</span><div class="stock-price">$34.72</div></div></a></div>
+        <div class="col-md-6"><a href="detail.html" data-link="detail" class="market-card stock-entry text-decoration-none"><div class="stock-left"><div class="stock-icon jnj">●</div><div><div class="stock-ticker">JNJ</div><div class="stock-name">Johnson & Johnson</div></div></div><div class="stock-right"><span class="trend-badge success">↗ +0,2%</span><div class="stock-price">$153.90</div></div></a></div>
+      </section>
+
+      <section id="newsList" class="news-list d-none">
+        <article class="news-item"><div class="news-thumb">💻</div><div class="news-content"><h3>Apple releases new product lineup</h3><p>Apple announced its latest product lineup with innovative features.</p><span class="news-time">○ 2 hours ago</span></div></article>
+        <article class="news-item"><div class="news-thumb">⌚</div><div class="news-content"><h3>Q2 Earnings Beat Expectations Despite Market Headwinds</h3><p>Apple reported stronger than expected earnings this quarter.</p><span class="news-time">○ 5 hours ago</span></div></article>
+        <article class="news-item"><div class="news-thumb">💰</div><div class="news-content"><h3>Analysts Raise Price Target Following Product Launch</h3><p>Major investment firms increased their price targets significantly.</p><span class="news-time">○ 1 day ago</span></div></article>
+        <article class="news-item"><div class="news-thumb">⌚</div><div class="news-content"><h3>Q2 Earnings Beat Expectations Despite Market Headwinds</h3><p>Apple reported stronger than expected earnings this quarter.</p><span class="news-time">○ 5 hours ago</span></div></article>
+        <article class="news-item"><div class="news-thumb">💰</div><div class="news-content"><h3>Analysts Raise Price Target Following Product Launch</h3><p>Major investment firms increased their price targets significantly.</p><span class="news-time">○ 1 day ago</span></div></article>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
