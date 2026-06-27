@@ -1,5 +1,11 @@
 const API_BASE = "http://localhost:3000";
 
+export async function getLocation() {
+  const r = await fetch(`${API_BASE}/api/location`);
+  if (!r.ok) throw new Error("location error");
+  return r.json();
+}
+
 export async function getSnapshot({ country = "US", q = "", currency = "USD" } = {}) {
   const params = new URLSearchParams({ country, q, currency });
   const r = await fetch(`${API_BASE}/api/market/snapshot?${params}`);
@@ -18,5 +24,12 @@ export async function getStock(symbol, timeframe = "1M", currency = "USD") {
   const params = new URLSearchParams({ timeframe, currency });
   const r = await fetch(`${API_BASE}/api/market/stock/${symbol}?${params}`);
   if (!r.ok) throw new Error("stock error");
+  return r.json();
+}
+
+export async function getIntraday(symbol, interval = "15min", outputsize = 64) {
+  const params = new URLSearchParams({ interval, outputsize: String(outputsize) });
+  const r = await fetch(`${API_BASE}/api/market/intraday/${symbol}?${params}`);
+  if (!r.ok) throw new Error("intraday error");
   return r.json();
 }

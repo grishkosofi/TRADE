@@ -1,6 +1,20 @@
-import { getStock } from "./api.js";
+import { getStock, getIntraday } from "./api.js";
 
 let chart;
+
+// Плагин: жестко ограничиваем ширину свечи в пикселях
+const thinCandlesPlugin = {
+  id: "thinCandlesPlugin",
+  afterDatasetDraw(chart, args) {
+    const meta = chart.getDatasetMeta(args.index);
+    const maxW = 8; // регулируй 6..10
+    meta.data.forEach((el) => {
+      if (el && typeof el.width === "number") {
+        el.width = Math.min(el.width, maxW);
+      }
+    });
+  },
+};
 
 function trendClass(changePct) {
   if (changePct > 0) return "trend-badge success";
@@ -50,42 +64,46 @@ function updateStats(data) {
 }
 
 function normalizeHistory(history = []) {
-  // 1) фильтруем мусор
-  const clean = history.filter(
-      (p) =>
-          p &&
-          p.time &&
-          Number.isFinite(Number(p.open)) &&
-          Number.isFinite(Number(p.high)) &&
-          Number.isFinite(Number(p.low)) &&
-          Number.isFinite(Number(p.close))
-  );
+  const rows = history
+      .filter((p) => p?.time)
+      .map((p) => {
+        const t = new Date(p.time).getTime();
+        return {
+          t,
+          o: Number(p.open),
+          h: Number(p.high),
+          l: Number(p.low),
+          c: Number(p.close),
+        };
+      })
+      .filter(
+          (p) =>
+              Number.isFinite(p.t) &&
+              Number.isFinite(p.o) &&
+              Number.isFinite(p.h) &&
+              Number.isFinite(p.l) &&
+              Number.isFinite(p.c)
+      )
+      .sort((a, b) => a.t - b.t);
 
-  // 2) сортируем по времени
-  clean.sort((a, b) => new Date(a.time) - new Date(b.time));
+  // дедуп по timestamp
+  const byTs = new Map();
+  for (const r of rows) byTs.set(r.t, r);
 
-  // 3) убираем дубли одной и той же даты (они часто и дают наложение)
-  const byDay = new Map();
-  for (const p of clean) {
-    const dayKey = new Date(p.time).toISOString().slice(0, 10);
-    byDay.set(dayKey, p); // оставляем последнюю свечу дня
-  }
-
-  return Array.from(byDay.values()).sort((a, b) => new Date(a.time) - new Date(b.time));
+  return Array.from(byTs.values()).sort((a, b) => a.t - b.t);
 }
 
-function renderCandles(history, symbol) {
+function renderCandles(history, symbol, timeframe = "1M") {
   const canvas = document.getElementById("stockChart");
   if (!canvas) return;
 
   const normalized = normalizeHistory(history);
-
   const candles = normalized.map((p) => ({
-    x: new Date(p.time),
-    o: Number(p.open),
-    h: Number(p.high),
-    l: Number(p.low),
-    c: Number(p.close),
+    x: p.t, // number timestamp лучше для timeseries
+    o: p.o,
+    h: p.h,
+    l: p.l,
+    c: p.c,
   }));
 
   if (chart) chart.destroy();
@@ -97,11 +115,6 @@ function renderCandles(history, symbol) {
         {
           label: symbol,
           data: candles,
-
-          // ключевой фикс ширины свечей
-          barPercentage: 0.55,
-          categoryPercentage: 0.72,
-
           borderColor: {
             up: "#22c55e",
             down: "#ef4444",
@@ -112,28 +125,26 @@ function renderCandles(history, symbol) {
             down: "rgba(239,68,68,0.85)",
             unchanged: "rgba(148,163,184,0.85)",
           },
+          barPercentage: timeframe === "1D" ? 0.22 : 0.35,
+          categoryPercentage: timeframe === "1D" ? 0.30 : 0.45,
         },
       ],
     },
+    plugins: [thinCandlesPlugin],
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
       parsing: false,
       animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
       },
       scales: {
         x: {
-          type: "time",
-          offset: true,
-          time: { unit: "day" },
+          type: "timeseries",
+          time: { unit: timeframe === "1D" ? "hour" : "day" },
           grid: { display: false },
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: 8,
-            maxRotation: 0,
-          },
+          ticks: { maxTicksLimit: 8, autoSkip: true, maxRotation: 0 },
         },
         y: {
           position: "right",
@@ -146,7 +157,34 @@ function renderCandles(history, symbol) {
 }
 
 export async function loadStock(symbol, timeframe, currency) {
+  if (timeframe === "1D") {
+    const intra = await getIntraday(symbol, "15min", 64);
+
+    // подгоняем формат под renderCandles/updateStats
+    const history = intra.history || [];
+    const last = history[history.length - 1];
+    const first = history[0];
+    const changePct = first?.close ? ((last.close - first.close) / first.close) * 100 : 0;
+
+    const data = {
+      symbol,
+      currency,
+      history,
+      summary: {
+        last_price: last?.close ?? null,
+        day_high: last?.high ?? null,
+        day_low: last?.low ?? null,
+        volume: last?.volume ?? null,
+        change_pct: changePct,
+      },
+    };
+
+    updateStats(data);
+    renderCandles(history, symbol, "1D");
+    return;
+  }
+
   const data = await getStock(symbol, timeframe, currency);
   updateStats(data);
-  renderCandles(data.history || [], symbol);
+  renderCandles(data.history || [], symbol, timeframe);
 }

@@ -1,49 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
-  const themeToggle = document.getElementById('themeToggle');
-  const loginTab = document.getElementById('loginTab');
-  const registerTab = document.getElementById('registerTab');
-  const authForm = document.getElementById('authForm');
-  const nameGroup = document.getElementById('nameGroup');
-  const submitBtn = document.getElementById('submitBtn');
-  const loginMeta = document.getElementById('loginMeta');
-  const modeButtons = document.querySelectorAll('.mode-btn');
-  const stocksGrid = document.getElementById('stocksGrid');
-  const newsList = document.getElementById('newsList');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const themeToggle = document.getElementById("themeToggle");
+  const loginTab = document.getElementById("loginTab");
+  const registerTab = document.getElementById("registerTab");
+  const authForm = document.getElementById("authForm");
+  const nameGroup = document.getElementById("nameGroup");
+  const submitBtn = document.getElementById("submitBtn");
+  const loginMeta = document.getElementById("loginMeta");
+  const modeButtons = document.querySelectorAll(".mode-btn");
+  const stocksGrid = document.getElementById("stocksGrid");
+  const newsList = document.getElementById("newsList");
+  const currencySelect = document.getElementById("currencySelect");
+  const searchInput = document.querySelector(".market-search");
+
+  const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('stockpulse-user');
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("stockpulse-user");
       sessionStorage.clear();
-      window.location.href = 'auth.html';
+      window.location.href = "auth.html";
     });
   }
 
-  const openProModalButtons = [document.getElementById('openProModal'), document.getElementById('openProModal2')].filter(Boolean);
-  const closeProModal = document.getElementById('closeProModal');
-  const proModal = document.getElementById('proModal');
-  const proModalBackdrop = document.getElementById('proModalBackdrop');
-  const planButtons = document.querySelectorAll('.plan-btn');
-  const proPrice = document.getElementById('proPrice');
-  const proPeriod = document.getElementById('proPeriod');
-  const saveBadge = document.getElementById('saveBadge');
-
   const routeMap = {
-    home: 'index.html',
-    markets: 'market.html',
-    portfolio: 'portfolio.html',
-    profile: 'profile.html',
-    detail: 'detail.html',
-    pro: 'pro.html'
+    home: "index.html",
+    markets: "market.html",
+    portfolio: "portfolio.html",
+    profile: "profile.html",
+    detail: "detail.html",
+    pro: "pro.html",
   };
 
   const setActiveNav = () => {
-    const current = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    document.querySelectorAll('[data-nav]').forEach((el) => {
+    const current = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+    document.querySelectorAll("[data-nav]").forEach((el) => {
       const key = el.dataset.nav;
       const href = routeMap[key];
-      const isActive = href && href.toLowerCase() === current;
-      el.classList.toggle('active', isActive);
+      el.classList.toggle("active", href && href.toLowerCase() === current);
     });
   };
 
@@ -52,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target) window.location.href = target;
   };
 
-  document.querySelectorAll('[data-nav]').forEach((el) => {
-    el.addEventListener('click', (e) => {
+  document.querySelectorAll("[data-nav]").forEach((el) => {
+    el.addEventListener("click", (e) => {
       const key = el.dataset.nav;
       if (routeMap[key]) {
         e.preventDefault();
@@ -62,110 +55,167 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.querySelectorAll('[data-link]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      const target = el.dataset.link;
-      if (routeMap[target]) {
-        e.preventDefault();
-        go(target);
-      }
-    });
-  });
-
   setActiveNav();
 
   const applyTheme = (theme) => {
-    body.classList.remove('theme-dark', 'theme-light');
+    body.classList.remove("theme-dark", "theme-light");
     body.classList.add(theme);
-    if (themeToggle) themeToggle.textContent = theme === 'theme-dark' ? '☼' : '☾';
-    document.querySelectorAll('[data-theme-icon]').forEach((icon) => {
-      icon.textContent = theme === 'theme-dark' ? '☾' : '☼';
-    });
-    document.querySelectorAll('[data-theme-label]').forEach((label) => {
-      label.textContent = theme === 'theme-dark' ? 'Light Mode' : 'Dark Mode';
-    });
+    if (themeToggle) themeToggle.textContent = theme === "theme-dark" ? "☼" : "☾";
   };
 
-  const savedTheme = localStorage.getItem('stockpulse-theme') || 'theme-dark';
-  applyTheme(savedTheme);
+  applyTheme(localStorage.getItem("stockpulse-theme") || "theme-dark");
 
-  const toggleTheme = () => {
-    const next = body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
+  themeToggle?.addEventListener("click", () => {
+    const next = body.classList.contains("theme-dark") ? "theme-light" : "theme-dark";
     applyTheme(next);
-    localStorage.setItem('stockpulse-theme', next);
-  };
-
-  if (themeToggle) {
-    themeToggle.addEventListener('click', toggleTheme);
-  }
-
-  document.querySelectorAll('[data-theme-toggle]').forEach((el) => {
-    el.addEventListener('click', toggleTheme);
+    localStorage.setItem("stockpulse-theme", next);
   });
 
   const setMode = (mode) => {
-    const isRegister = mode === 'register';
-    loginTab?.classList.toggle('active', !isRegister);
-    registerTab?.classList.toggle('active', isRegister);
-    loginTab?.setAttribute('aria-selected', (!isRegister).toString());
-    registerTab?.setAttribute('aria-selected', isRegister.toString());
-    nameGroup?.classList.toggle('d-none', !isRegister);
-    loginMeta?.classList.toggle('d-none', isRegister);
-    if (submitBtn) submitBtn.textContent = isRegister ? 'Create Account' : 'Log in';
+    const isRegister = mode === "register";
+    loginTab?.classList.toggle("active", !isRegister);
+    registerTab?.classList.toggle("active", isRegister);
+    nameGroup?.classList.toggle("d-none", !isRegister);
+    loginMeta?.classList.toggle("d-none", isRegister);
+    if (submitBtn) submitBtn.textContent = isRegister ? "Create Account" : "Log in";
   };
 
-  loginTab?.addEventListener('click', () => setMode('login'));
-  registerTab?.addEventListener('click', () => setMode('register'));
-  setMode('login');
+  loginTab?.addEventListener("click", () => setMode("login"));
+  registerTab?.addEventListener("click", () => setMode("register"));
+  setMode("login");
 
-  authForm?.addEventListener('submit', (e) => {
-    const isRegister = registerTab?.classList.contains('active');
-    if (!isRegister) {
+  authForm?.addEventListener("submit", (e) => {
+    if (!registerTab?.classList.contains("active")) {
       e.preventDefault();
-      go('home');
+      go("home");
     }
   });
 
-  modeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      modeButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const mode = btn.dataset.mode;
+  modeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      modeButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const showStocks = btn.dataset.mode === "stocks";
       if (stocksGrid && newsList) {
-        const showStocks = mode === 'stocks';
-        stocksGrid.classList.toggle('d-none', !showStocks);
-        newsList.classList.toggle('d-none', showStocks);
+        stocksGrid.classList.toggle("d-none", !showStocks);
+        newsList.classList.toggle("d-none", showStocks);
       }
     });
   });
 
-  const openModal = () => {
-    proModal?.classList.remove('d-none');
-    proModalBackdrop?.classList.remove('d-none');
-  };
-  const closeModal = () => {
-    proModal?.classList.add('d-none');
-    proModalBackdrop?.classList.add('d-none');
+  // ===== MARKET (US only + company search) =====
+  const US_UNIVERSE = [
+    { symbol: "AAPL", name: "Apple Inc." },
+    { symbol: "MSFT", name: "Microsoft Corp." },
+    { symbol: "GOOGL", name: "Alphabet Inc." },
+    { symbol: "AMZN", name: "Amazon Inc." },
+    { symbol: "TSLA", name: "Tesla Inc." },
+    { symbol: "META", name: "Meta Platforms" },
+    { symbol: "NVDA", name: "NVIDIA Corp." },
+    { symbol: "JPM", name: "JPMorgan Chase" },
+    { symbol: "BAC", name: "Bank of America" },
+    { symbol: "JNJ", name: "Johnson & Johnson" },
+  ];
+
+  let currentCurrency = (localStorage.getItem("stockpulse-currency") || "USD").toUpperCase();
+  let lastItems = [];
+
+  const fmtPrice = (v, c = "USD") => (v == null || Number.isNaN(Number(v)) ? "-" : `${Number(v).toFixed(2)} ${c}`);
+
+  const trendBadge = (pct = 0) => {
+    const p = Number(pct || 0);
+    return {
+      text: `${p >= 0 ? "↗" : "↘"} ${p >= 0 ? "+" : ""}${p.toFixed(2)}%`,
+      cls: p >= 0 ? "success" : "danger",
+    };
   };
 
-  openProModalButtons.forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); openModal(); }));
-  closeProModal?.addEventListener('click', closeModal);
-  proModalBackdrop?.addEventListener('click', closeModal);
+  const renderStocks = (items = [], currency = "USD") => {
+    if (!stocksGrid) return;
+    if (!items.length) {
+      stocksGrid.innerHTML = `<div class="col-12"><div class="market-card">No companies found</div></div>`;
+      return;
+    }
 
-  planButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      planButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const plan = btn.dataset.plan;
-      if (plan === 'annual') {
-        proPrice.textContent = '$99.99';
-        proPeriod.textContent = 'per year';
-        saveBadge?.classList.remove('d-none');
-      } else {
-        proPrice.textContent = '$12.99';
-        proPeriod.textContent = 'per month';
-        saveBadge?.classList.add('d-none');
-      }
+    stocksGrid.innerHTML = items.map((it) => {
+      const b = trendBadge(it.change_pct);
+      const symbol = it.symbol || "N/A";
+      const name = it.name || symbol;
+      return `
+        <div class="col-md-6">
+          <a href="detail.html?symbol=${encodeURIComponent(symbol)}&currency=${encodeURIComponent(currency)}"
+             class="market-card stock-entry text-decoration-none">
+            <div class="stock-left">
+              <div class="stock-icon dark">${symbol[0] || "•"}</div>
+              <div>
+                <div class="stock-ticker">${symbol}</div>
+                <div class="stock-name">${name}</div>
+              </div>
+            </div>
+            <div class="stock-right">
+              <span class="trend-badge ${b.cls}">${b.text}</span>
+              <div class="stock-price">${fmtPrice(it.price, currency)}</div>
+            </div>
+          </a>
+        </div>
+      `;
+    }).join("");
+  };
+
+  const applySearchFilter = () => {
+    const q = (searchInput?.value || "").trim().toLowerCase();
+    if (!q) {
+      renderStocks(lastItems, currentCurrency);
+      return;
+    }
+
+    const filtered = lastItems.filter((it) => {
+      const symbol = String(it.symbol || "").toLowerCase();
+      const name = String(it.name || "").toLowerCase();
+      return symbol.includes(q) || name.includes(q);
     });
+
+    renderStocks(filtered, currentCurrency);
+  };
+
+  const loadUSMarket = async () => {
+    if (!stocksGrid || !window.api) return;
+
+    const symbols = US_UNIVERSE.map((x) => x.symbol).join(",");
+    const snap = await window.api.getSnapshot({
+      country: "US",
+      currency: currentCurrency,
+      q: symbols,
+    });
+
+    // обогащаем именами компаний
+    const nameMap = new Map(US_UNIVERSE.map((x) => [x.symbol, x.name]));
+    lastItems = (snap.items || []).map((it) => ({
+      ...it,
+      name: nameMap.get(it.symbol) || it.name || it.symbol,
+    }));
+
+    applySearchFilter();
+  };
+
+  currencySelect?.addEventListener("change", async (e) => {
+    currentCurrency = String(e.target.value || "USD").toUpperCase();
+    localStorage.setItem("stockpulse-currency", currentCurrency);
+    try {
+      await loadUSMarket();
+    } catch (err) {
+      console.error("currency switch error:", err);
+    }
   });
+
+  searchInput?.addEventListener("input", () => {
+    applySearchFilter();
+  });
+
+  const geoEl = document.getElementById("geoLabel");
+  if (geoEl) geoEl.textContent = `United States · ${currentCurrency}`;
+
+  if (currencySelect) currencySelect.value = currentCurrency;
+
+  loadUSMarket().catch(console.error);
 });
