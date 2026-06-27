@@ -58,7 +58,6 @@
           </div>
         </div>
 
-        <!-- вместо placeholder: реальный canvas -->
         <div class="detail-chart" style="height: 320px;">
           <canvas id="stockChart"></canvas>
         </div>
@@ -107,7 +106,11 @@
 </main>
 
 <script src="script.js"></script>
+
+<!-- Chart.js + plugins for candlestick -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
 
 <script type="module">
   import { loadStock } from "./stock-page.js";
